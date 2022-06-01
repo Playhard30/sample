@@ -453,79 +453,86 @@ if (isset($_POST['update11'])) {
         echo "<script>window.location='edit_ebook.php?ebook_id=" . $id . "'</script>";
     } else {
 
-        $delete_file = "../../ebooks/" . $row['fileName'];
-        if (!unlink($delete_file)) {
-            echo ("$delete_file cannot be deleted due to an error");
-        } else {
-            $gen_file = rand(1000, 99999) . "_" . $_FILES['fileUpload']['name'];
-            move_uploaded_file($tmp_file, $target_dir . $gen_file);
 
-            if (!isset($_POST['include_img']) && isset($_POST['include'])) {
+        $gen_file = rand(1000, 99999) . "_" . $_FILES['fileUpload']['name'];
+        move_uploaded_file($tmp_file, $target_dir . $gen_file);
+
+        if (!isset($_POST['include_img']) && isset($_POST['include'])) {
+            $delete_file = "../../ebooks/" . $row['fileName'];
+            if (!unlink($delete_file)) {
+                echo ("$delete_file cannot be deleted due to an error");
+            } else {
                 mysqli_query($con, " UPDATE ebooks SET call_no='$call_no',title='$title', subject='$subject', author='$author', editor='$editor', edition='$edition', pop_id='$pop_id', publisher_id='$publisher_id', quantity='$quantity', 
 date_of_publ='$date_of_publ', series='$series', isbn_no='$isbn_no', accession_no='$accession_no', moa_id='$moa_id', issn_no='$issn_no', notation1='$notation1', notation2='$notation2', abstract='$abstract', remarks='$remark',page_no='$page_no', fileName = '$gen_file' WHERE ebook_id = '$id' ") or die(mysqli_error($con));
                 $_SESSION['success_up'] = true;
                 echo "<script>window.location='edit_ebook.php?ebook_id=" . $id . "'</script>";
-            } elseif (isset($_POST['include_img']) && isset($_POST['include'])) {
+            }
+        } elseif (isset($_POST['include_img']) && isset($_POST['include'])) {
+            $delete_file = "../../ebooks/" . $row['fileName'];
+            if (!unlink($delete_file)) {
+                echo ("$delete_file cannot be deleted due to an error");
+            } else {
                 mysqli_query($con, " UPDATE ebooks SET call_no='$call_no',title='$title', subject='$subject', author='$author', editor='$editor', edition='$edition', pop_id='$pop_id', publisher_id='$publisher_id', quantity='$quantity', 
                     date_of_publ='$date_of_publ', series='$series', isbn_no='$isbn_no', accession_no='$accession_no', moa_id='$moa_id', issn_no='$issn_no', notation1='$notation1', notation2='$notation2', abstract='$abstract', remarks='$remark',page_no='$page_no', fileName = '$gen_file', ebook_img='$img' WHERE ebook_id = '$id' ") or die(mysqli_error($con));
                 $_SESSION['success_up'] = true;
                 echo "<script>window.location='edit_ebook.php?ebook_id=" . $id . "'</script>";
-            } elseif (!isset($_POST['include_img']) && !isset($_POST['include'])) {
-                mysqli_query($con, " UPDATE ebooks SET call_no='$call_no',title='$title', subject='$subject', author='$author', editor='$editor', edition='$edition', pop_id='$pop_id', publisher_id='$publisher_id', quantity='$quantity', 
-date_of_publ='$date_of_publ', series='$series', isbn_no='$isbn_no', accession_no='$accession_no', moa_id='$moa_id', issn_no='$issn_no', notation1='$notation1', notation2='$notation2', abstract='$abstract', remarks='$remark',page_no='$page_no' WHERE ebook_id = '$id' ") or die(mysqli_error($con));
-                $_SESSION['success_up'] = true;
-                echo "<script>window.location='edit_ebook.php?ebook_id=" . $id . "'</script>";
-            } elseif (isset($_POST['include_img']) && !isset($_POST['include'])) {
-                mysqli_query($con, " UPDATE ebooks SET call_no='$call_no',title='$title', subject='$subject', author='$author', editor='$editor', edition='$edition', pop_id='$pop_id', publisher_id='$publisher_id', quantity='$quantity', 
-            date_of_publ='$date_of_publ', series='$series', isbn_no='$isbn_no', accession_no='$accession_no', moa_id='$moa_id', issn_no='$issn_no', notation1='$notation1', notation2='$notation2', abstract='$abstract', remarks='$remark',page_no='$page_no', ebook_img='$img' WHERE ebook_id = '$id' ") or die(mysqli_error($con));
-                $_SESSION['success_up'] = true;
-                echo "<script>window.location='edit_ebook.php?ebook_id=" . $id . "'</script>";
             }
+        } elseif (!isset($_POST['include_img']) && !isset($_POST['include'])) {
+            mysqli_query($con, " UPDATE ebooks SET call_no='$call_no',title='$title', subject='$subject', author='$author', editor='$editor', edition='$edition', pop_id='$pop_id', publisher_id='$publisher_id', quantity='$quantity', 
+date_of_publ='$date_of_publ', series='$series', isbn_no='$isbn_no', accession_no='$accession_no', moa_id='$moa_id', issn_no='$issn_no', notation1='$notation1', notation2='$notation2', abstract='$abstract', remarks='$remark',page_no='$page_no' WHERE ebook_id = '$id' ") or die(mysqli_error($con));
+            $_SESSION['success_up'] = true;
+            echo "<script>window.location='edit_ebook.php?ebook_id=" . $id . "'</script>";
+        } elseif (isset($_POST['include_img']) && !isset($_POST['include'])) {
+            mysqli_query($con, " UPDATE ebooks SET call_no='$call_no',title='$title', subject='$subject', author='$author', editor='$editor', edition='$edition', pop_id='$pop_id', publisher_id='$publisher_id', quantity='$quantity', 
+            date_of_publ='$date_of_publ', series='$series', isbn_no='$isbn_no', accession_no='$accession_no', moa_id='$moa_id', issn_no='$issn_no', notation1='$notation1', notation2='$notation2', abstract='$abstract', remarks='$remark',page_no='$page_no', ebook_img='$img' WHERE ebook_id = '$id' ") or die(mysqli_error($con));
+            $_SESSION['success_up'] = true;
+            echo "<script>window.location='edit_ebook.php?ebook_id=" . $id . "'</script>";
         }
     }
-
-
-    // }else{
-    //  if($size > 10000000) //conditions for the file
-    //  {
-    //  die("Format is not allowed or file size is too big!");
-    //  }
-
-
-    // move_uploaded_file($_FILES["image"]["tmp_name"],"upload/" . $_FILES["image"]["name"]);           
-    // $profile=$_FILES["image"]["name"];
-
-    //                     $title=mysqli_real_escape_string($con,$_POST['title']);
-    //                     $subject=$_POST['subject'];
-    //                     $author=$_POST['author'];
-    //                     $editor=$_POST['editor'];
-    //                     $edition=$_POST['edition'];
-    //                     $pop_id=$_POST['pop_id'];
-    //                     $publisher_id=$_POST['publisher_id'];
-    //                     $quantity=$_POST['quantity'];
-    //                     $date_of_publ=$_POST['date_of_publ'];
-    //                     $series=$_POST['series'];
-    //                     $isbn_no=$_POST['isbn_no'];
-    //                     $accession_no=$_POST['accession_no'];
-    //                     $moa_id=$_POST['moa_id'];
-    //                     $issn_no=$_POST['issn_no'];
-    //                     $notation1=$_POST['notation1'];
-    //                     $notation2=$_POST['notation2'];
-    //                     $abstract=$_POST['abstract'];
-
-
-    //                     if ($quantity == 0 ) {
-    //                         $remark = 'Not Available';
-    //                     }else{
-    //                         $remark = 'Available';
-    //                     }
-
-    // mysqli_query($con," UPDATE book SET title='$title', subject='$subject', author='$author', editor='$editor', edition='$edition', pop_id='$pop_id', publisher_id='$publisher_id',  quantity='$quantity', 
-    // date_of_publ='$date_of_publ', series='$series', isbn_no='$isbn_no', accession_no='$accession_no', moa_id='$moa_id', issn_no='$issn_no', notation1='$notation1', notation2='$notation2', abstract='$abstract', remarks='$remark' WHERE book_id = '$id' ")or die(mysql_error());
-    // echo "<script>alert('Successfully Updated Book Info!'); window.location='book.php'</script>";   
-
-    // // }
 }
+
+
+// }else{
+//  if($size > 10000000) //conditions for the file
+//  {
+//  die("Format is not allowed or file size is too big!");
+//  }
+
+
+// move_uploaded_file($_FILES["image"]["tmp_name"],"upload/" . $_FILES["image"]["name"]);           
+// $profile=$_FILES["image"]["name"];
+
+//                     $title=mysqli_real_escape_string($con,$_POST['title']);
+//                     $subject=$_POST['subject'];
+//                     $author=$_POST['author'];
+//                     $editor=$_POST['editor'];
+//                     $edition=$_POST['edition'];
+//                     $pop_id=$_POST['pop_id'];
+//                     $publisher_id=$_POST['publisher_id'];
+//                     $quantity=$_POST['quantity'];
+//                     $date_of_publ=$_POST['date_of_publ'];
+//                     $series=$_POST['series'];
+//                     $isbn_no=$_POST['isbn_no'];
+//                     $accession_no=$_POST['accession_no'];
+//                     $moa_id=$_POST['moa_id'];
+//                     $issn_no=$_POST['issn_no'];
+//                     $notation1=$_POST['notation1'];
+//                     $notation2=$_POST['notation2'];
+//                     $abstract=$_POST['abstract'];
+
+
+//                     if ($quantity == 0 ) {
+//                         $remark = 'Not Available';
+//                     }else{
+//                         $remark = 'Available';
+//                     }
+
+// mysqli_query($con," UPDATE book SET title='$title', subject='$subject', author='$author', editor='$editor', edition='$edition', pop_id='$pop_id', publisher_id='$publisher_id',  quantity='$quantity', 
+// date_of_publ='$date_of_publ', series='$series', isbn_no='$isbn_no', accession_no='$accession_no', moa_id='$moa_id', issn_no='$issn_no', notation1='$notation1', notation2='$notation2', abstract='$abstract', remarks='$remark' WHERE book_id = '$id' ")or die(mysql_error());
+// echo "<script>alert('Successfully Updated Book Info!'); window.location='book.php'</script>";   
+
+// // }
+
 
 
 include 'script.php'; ?>
