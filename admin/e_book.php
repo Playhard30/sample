@@ -350,7 +350,7 @@ if ($_SESSION['role'] == "Administrator") {
                                                             $image = $_FILES['image']['name'];
                                                             $tmp_image = $_FILES['image']['tmp_name'];
                                                             $image_ext = pathinfo($image, PATHINFO_EXTENSION);
-                                                            $ext_img = ['jpeg', 'jpg', 'svg', 'png'];
+                                                            $ext_img = ['jpeg', 'jpg', 'svg', 'png', 'JPEG', 'JPG', 'SVG', 'PNG'];
                                                             $img = addslashes(file_get_contents($_FILES['image']['tmp_name']));
 
                                                             if (!in_array($image_ext, $ext_img)) {

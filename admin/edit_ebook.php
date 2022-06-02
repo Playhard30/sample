@@ -306,11 +306,8 @@ if (isset($_SESSION['success_up'])) {
                                             </div>
                                             <div class="form-group">
 
-                                                <label class="control-label col-md-4" for="file"> <input type="checkbox"
-                                                        name="include" id="include" value="checked">
-                                                    <label class="control-label text-sm text-light-blue"
-                                                        for="include">Include</label> Upload File <span class="required"
-                                                        style="color:red;">*</span>
+                                                <label class="control-label col-md-4" for="file"> Upload File <span
+                                                        class="required" style="color:red;">*</span>
                                                 </label>
                                                 <div class="col-md-4">
                                                     <input type="file" name="fileUpload" id="file"
@@ -324,11 +321,7 @@ if (isset($_SESSION['success_up'])) {
 
                                             <div class="form-group">
 
-                                                <label class="control-label col-md-4" for="image"> <input
-                                                        type="checkbox" name="include_img" id="include_img"
-                                                        value="checked">
-                                                    <label class="control-label text-sm text-light-blue"
-                                                        for="include_img">Include</label> E-Book Image
+                                                <label class="control-label col-md-4" for="image"> E-Book Image
                                                 </label>
                                                 <div class="col-md-4">
                                                     <input type="file" name="image" id="image"
@@ -415,26 +408,21 @@ if (isset($_POST['update11'])) {
     }
 
     $error = 0;
-    if (isset($_POST['include_img'])) {
-        if (!empty($_FILES['image']['tmp_name'])) {
-            // image validation
-            $image = $_FILES['image']['name'];
-            $tmp_image = $_FILES['image']['tmp_name'];
-            $image_ext = pathinfo($image, PATHINFO_EXTENSION);
-            $ext_img = ['jpeg', 'jpg', 'svg', 'png'];
-            $img = addslashes(file_get_contents($_FILES['image']['tmp_name']));
+    if (!empty($_FILES['image']['tmp_name'])) {
+        // image validation
+        $image = $_FILES['image']['name'];
+        $tmp_image = $_FILES['image']['tmp_name'];
+        $image_ext = pathinfo($image, PATHINFO_EXTENSION);
+        $ext_img = ['jpeg', 'jpg', 'svg', 'png', 'JPEG', 'JPG', 'SVG', 'PNG'];
+        $img = addslashes(file_get_contents($_FILES['image']['tmp_name']));
 
-            if (!in_array($image_ext, $ext_img)) {
-                $error++;
-                $_SESSION['error_message_image_ext'] = "The E-Book Image must be an image";
-            }
-        } else {
-            $img = null;
+        if (!in_array($image_ext, $ext_img)) {
+            $error++;
+            $_SESSION['error_message_image_ext'] = "The E-Book Image must be an image";
         }
     }
 
-    if (isset($_POST['include'])) {
-
+    if (!empty($_FILES['fileUpload']['tmp_name'])) {
         // file validation
         $file = $_FILES['fileUpload']['name'];
         $tmp_file = $_FILES['fileUpload']['tmp_name'];
@@ -453,11 +441,10 @@ if (isset($_POST['update11'])) {
         echo "<script>window.location='edit_ebook.php?ebook_id=" . $id . "'</script>";
     } else {
 
-
         $gen_file = rand(1000, 99999) . "_" . $_FILES['fileUpload']['name'];
         move_uploaded_file($tmp_file, $target_dir . $gen_file);
 
-        if (!isset($_POST['include_img']) && isset($_POST['include'])) {
+        if (!empty($_FILES['fileUpload']['tmp_name']) && empty($_FILES['image']['tmp_name'])) {
             $delete_file = "../../ebooks/" . $row['fileName'];
             if (!unlink($delete_file)) {
                 echo ("$delete_file cannot be deleted due to an error");
@@ -467,7 +454,7 @@ date_of_publ='$date_of_publ', series='$series', isbn_no='$isbn_no', accession_no
                 $_SESSION['success_up'] = true;
                 echo "<script>window.location='edit_ebook.php?ebook_id=" . $id . "'</script>";
             }
-        } elseif (isset($_POST['include_img']) && isset($_POST['include'])) {
+        } elseif (!empty($_FILES['fileUpload']['tmp_name']) && !empty($_FILES['image']['tmp_name'])) {
             $delete_file = "../../ebooks/" . $row['fileName'];
             if (!unlink($delete_file)) {
                 echo ("$delete_file cannot be deleted due to an error");
@@ -477,14 +464,14 @@ date_of_publ='$date_of_publ', series='$series', isbn_no='$isbn_no', accession_no
                 $_SESSION['success_up'] = true;
                 echo "<script>window.location='edit_ebook.php?ebook_id=" . $id . "'</script>";
             }
-        } elseif (!isset($_POST['include_img']) && !isset($_POST['include'])) {
-            mysqli_query($con, " UPDATE ebooks SET call_no='$call_no',title='$title', subject='$subject', author='$author', editor='$editor', edition='$edition', pop_id='$pop_id', publisher_id='$publisher_id', quantity='$quantity', 
-date_of_publ='$date_of_publ', series='$series', isbn_no='$isbn_no', accession_no='$accession_no', moa_id='$moa_id', issn_no='$issn_no', notation1='$notation1', notation2='$notation2', abstract='$abstract', remarks='$remark',page_no='$page_no' WHERE ebook_id = '$id' ") or die(mysqli_error($con));
-            $_SESSION['success_up'] = true;
-            echo "<script>window.location='edit_ebook.php?ebook_id=" . $id . "'</script>";
-        } elseif (isset($_POST['include_img']) && !isset($_POST['include'])) {
+        } elseif (empty($_FILES['fileUpload']['tmp_name']) && !empty($_FILES['image']['tmp_name'])) {
             mysqli_query($con, " UPDATE ebooks SET call_no='$call_no',title='$title', subject='$subject', author='$author', editor='$editor', edition='$edition', pop_id='$pop_id', publisher_id='$publisher_id', quantity='$quantity', 
             date_of_publ='$date_of_publ', series='$series', isbn_no='$isbn_no', accession_no='$accession_no', moa_id='$moa_id', issn_no='$issn_no', notation1='$notation1', notation2='$notation2', abstract='$abstract', remarks='$remark',page_no='$page_no', ebook_img='$img' WHERE ebook_id = '$id' ") or die(mysqli_error($con));
+            $_SESSION['success_up'] = true;
+            echo "<script>window.location='edit_ebook.php?ebook_id=" . $id . "'</script>";
+        } else {
+            mysqli_query($con, " UPDATE ebooks SET call_no='$call_no',title='$title', subject='$subject', author='$author', editor='$editor', edition='$edition', pop_id='$pop_id', publisher_id='$publisher_id', quantity='$quantity', 
+            date_of_publ='$date_of_publ', series='$series', isbn_no='$isbn_no', accession_no='$accession_no', moa_id='$moa_id', issn_no='$issn_no', notation1='$notation1', notation2='$notation2', abstract='$abstract', remarks='$remark',page_no='$page_no' WHERE ebook_id = '$id' ") or die(mysqli_error($con));
             $_SESSION['success_up'] = true;
             echo "<script>window.location='edit_ebook.php?ebook_id=" . $id . "'</script>";
         }
